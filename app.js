@@ -1,6 +1,11 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+const jwt = require('jsonwebtoken');
+const passport = require('passport');
+const passportJWT = require('passport-jwt');
+const ExtractJwt = passportJWT.ExtractJwt;
+const JwtStrategy = requireJWT.Strategy;
 require("dotenv").config();
 const port = process.env.PORT || 5000;
 const db = require("./queries");
