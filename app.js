@@ -74,7 +74,7 @@ app.post("/login", async (req, res) => {
     const payload = { id: user.id };
     const token = jwt.sign(payload, jwtOptions.secretOrKey);
 
-    res.json({ message: "OK", token: token });
+    res.json({ message: "OK", token: token, id: user.id });
   } else {
     res.status(401).json({ message: "password did not match" });
   }
