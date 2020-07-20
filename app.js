@@ -65,20 +65,62 @@ app.post("/login", async (req, res) => {
   );
 
   const user = result.rows[0];
+  console.log(user);
 
   if (!user) {
-    return res.status(401).json({ message: "user not found" });
+    return res.status(500).json({
+      message:
+        "Please make sure that you have entered your login and password correctly.",
+    });
   }
 
   if (user.password === password) {
     const payload = { id: user.id };
     const token = jwt.sign(payload, jwtOptions.secretOrKey);
 
-    res.json({ message: "OK", token: token, id: user.id });
+    res.json({
+      message: "You are successfully logged in!",
+      token: token,
+      id: user.id,
+    });
   } else {
-    res.status(401).json({ message: "password did not match" });
+    res.status(500).json({
+      message:
+        "Please make sure that you have entered your login and password correctly.",
+    });
   }
 });
+
+app.post(
+  "/sign_up",
+  async (
+    { body: { username, firstName, lastName, email, password, description } },
+    res
+  ) => {
+    const result = await pool.query(
+      "INSERT INTO users(username, firstname, lastname, email, password, description, role) VALUES ($1, $2, $3, $4, $5, $6, 'user')",
+      [username, firstName, lastName, email, password, description]
+    );
+
+    const getToken = await pool.query(
+      "SELECT id, role FROM users WHERE username = $1",
+      [username]
+    );
+
+    const { id, role } = getToken.rows[0];
+
+    const payload = { id: id };
+
+    const token = jwt.sign(payload, jwtOptions.secretOrKey);
+    res.status(200).send({
+      id: id,
+      token: token,
+      role: role,
+      username: username,
+      message: "",
+    });
+  }
+);
 
 app.get(
   "/secret",
