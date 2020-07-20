@@ -68,7 +68,6 @@ app.post("/login", async ({ body: { username, password } }, res) => {
     );
 
     const user = result.rows[0];
-    console.log(user);
 
     if (!user) {
       return res.status(500).json({
@@ -148,6 +147,3 @@ app.get(
     res.json("debugging");
   }
 );
-
-// const salt = crypto.randomBytes(16).toString("base64");
-// console.log(salt);
