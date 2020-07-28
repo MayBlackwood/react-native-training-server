@@ -12,7 +12,6 @@ const getUsers = (req, res) => {
     if (error) {
       throw error;
     }
-    console.log(results.rows);
 
     res.status(200).send(results.rows);
   });
@@ -25,7 +24,7 @@ const getUserById = (request, response) => {
     if (error) {
       throw error;
     }
-    response.status(200).json(results.rows);
+    response.status(200).json(results.rows[0]);
   });
 };
 
@@ -47,11 +46,19 @@ const createUser = (request, response) => {
 
 const updateUser = (request, response) => {
   const id = parseInt(request.params.id);
-  const { firstName, lastName, email, password, description } = request.body;
+  const {
+    firstname,
+    lastname,
+    email,
+    password,
+    description,
+    username,
+  } = request.body;
 
   pool.query(
-    `UPDATE users SET firstname = $1, lastname = $2, email = $3, password = $4, description = $5`,
-    [firstName, lastName, email, password, description],
+    `UPDATE users SET firstname = $1, lastname = $2, email = $3, username = $4, description = $5
+      WHERE id = $6 `,
+    [firstname, lastname, email, username, description, id],
     (error, results) => {
       if (error) {
         throw error;

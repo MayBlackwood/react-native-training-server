@@ -106,7 +106,7 @@ app.post(
     const key = await getKey(password, salt, 5000, 8, 'sha512');
     if (key) {
       const result = await pool.query(
-        "INSERT INTO users(username, firstname, lastname, email, password, description, role) VALUES ($1, $2, $3, $4, $5, $6, 'admin')",
+        "INSERT INTO users(username, firstname, lastname, email, password, description, role) VALUES ($1, $2, $3, $4, $5, $6, 'user')",
         [
           username,
           firstName,
