@@ -131,7 +131,7 @@ app.post(
         token: token,
         role: role,
         username: username,
-        message: '',
+        message: 'You are successfully signed up.',
       });
     }
   },
