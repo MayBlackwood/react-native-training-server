@@ -37,8 +37,8 @@ app.put('/users/:id', db.updateUser);
 app.delete('/users/:id', db.deleteUser);
 app.get('/friends/:id', db.getFriends);
 app.post('/friends/add', db.sendFriendRequest);
-app.get('/requests/outgoing', db.getOutgoingRequests);
-app.get('/requests/incoming', db.getIncomingRequests);
+app.get('/requests/outgoing:id', db.getOutgoingRequests);
+app.get('/requests/incoming:id', db.getIncomingRequests);
 
 const jwtOptions = {
   secretOrKey: process.env.SECRET_KEY,

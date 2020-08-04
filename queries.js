@@ -126,7 +126,7 @@ const sendFriendRequest = (request, response) => {
 };
 
 const getOutgoingRequests = (request, response) => {
-  const userId = request.body.userId;
+  const userId = parseInt(request.params.id);
 
   pool.query(
     `
@@ -140,13 +140,15 @@ const getOutgoingRequests = (request, response) => {
         throw error;
       }
 
+      console.log(results.rows);
+
       response.status(200).json(results.rows);
     },
   );
 };
 
 const getIncomingRequests = (request, response) => {
-  const userId = request.body.userId;
+  const userId = parseInt(request.params.id);
 
   pool.query(
     `
@@ -159,6 +161,8 @@ const getIncomingRequests = (request, response) => {
       if (error) {
         throw error;
       }
+
+      console.log(results.rows);
 
       response.status(200).json(results.rows);
     },
