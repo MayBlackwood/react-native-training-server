@@ -68,6 +68,7 @@ const updateUser = (request, response) => {
     },
   );
 };
+
 const deleteUser = (request, response) => {
   const id = request.body.id;
 
@@ -80,10 +81,57 @@ const deleteUser = (request, response) => {
   });
 };
 
+const getFriends = (request, response) => {
+  const id = request.params.id;
+
+  pool.query(
+    `
+      SELECT uf.addressee_id AS friend_id, u.* FROM user_friends uf
+        JOIN users u ON u.id = uf.addressee_id
+       WHERE uf.requester_id = $1;
+    `,
+    [id],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+
+      response.status(200).json(results.rows);
+    },
+  );
+};
+
+const sendFriendRequest = (request, response) => {
+  console.log(request.body);
+  const requester_id = request.body.requesterId;
+  const addressee_id = request.body.addresseeId;
+
+  pool.query(
+    `
+      INSERT INTO user_friends(requester_id, addressee_id, created_date_time)
+      VALUES($1, $2, now());
+    `,
+    [requester_id, addressee_id],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+
+      console.log(results);
+
+      response
+        .status(201)
+        .send(`Your request to user with id ${addressee_id} was sent.`);
+    },
+  );
+};
+
 module.exports = {
   getUsers,
   getUserById,
   createUser,
   updateUser,
   deleteUser,
+  getFriends,
+  sendFriendRequest,
 };
