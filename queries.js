@@ -24,6 +24,7 @@ const getUserById = (request, response) => {
     if (error) {
       throw error;
     }
+
     response.status(200).json(results.rows[0]);
   });
 };
@@ -117,11 +118,49 @@ const sendFriendRequest = (request, response) => {
         throw error;
       }
 
-      console.log(results);
-
       response
         .status(201)
         .send(`Your request to user with id ${addressee_id} was sent.`);
+    },
+  );
+};
+
+const getOutgoingRequests = (request, response) => {
+  const userId = request.body.userId;
+
+  pool.query(
+    `
+      SELECT addressee_id FROM user_friends 
+       WHERE requester_id = $1 
+         AND accepted = false
+    `,
+    [userId],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+
+      response.status(200).json(results.rows);
+    },
+  );
+};
+
+const getIncomingRequests = (request, response) => {
+  const userId = request.body.userId;
+
+  pool.query(
+    `
+      SELECT requester_id FROM user_friends 
+       WHERE addressee_id = $1 
+         AND accepted = false
+    `,
+    [userId],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+
+      response.status(200).json(results.rows);
     },
   );
 };
@@ -134,4 +173,6 @@ module.exports = {
   deleteUser,
   getFriends,
   sendFriendRequest,
+  getOutgoingRequests,
+  getIncomingRequests,
 };
