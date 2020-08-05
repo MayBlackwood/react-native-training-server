@@ -40,6 +40,7 @@ app.post('/friends/add', db.sendFriendRequest);
 app.post('/friends/accept', db.acceptFriendRequest);
 app.get('/requests/outgoing:id', db.getOutgoingRequests);
 app.get('/requests/incoming:id', db.getIncomingRequests);
+app.delete('/friends/remove', db.declineOrRemoveFriend);
 
 const jwtOptions = {
   secretOrKey: process.env.SECRET_KEY,

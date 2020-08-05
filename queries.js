@@ -1,3 +1,5 @@
+const { response } = require('express');
+
 const Pool = require('pg').Pool;
 const pool = new Pool({
   user: 'postgres',
@@ -145,13 +147,11 @@ const acceptFriendRequest = async (request, response) => {
     const {
       rows: result,
     } = await pool.query(`SELECT * FROM users WHERE id = $1`, [requester_id]);
-    console.log(result[0])
-    response
-      .status(200)
-      .json({
-        data: result[0],
-        message: `User with id ${requester_id} is your friend now.`,
-      });
+
+    response.status(200).json({
+      data: result[0],
+      message: `User with id ${requester_id} is your friend now.`,
+    });
   } catch (error) {
     throw error;
   }
@@ -197,6 +197,27 @@ const getIncomingRequests = (request, response) => {
   );
 };
 
+const declineOrRemoveFriend = (request, response) => {
+  const userId = request.body.userId;
+  const currentUserId = request.body.currentUserId;
+
+  pool.query(
+    `
+      DELETE FROM user_friends
+       WHERE (requester_id = $1 AND addressee_id = $2)
+          OR (addressee_id = $1 AND requester_id = $2)
+    `,
+    [userId, currentUserId],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+
+      response.status(200).send(true);
+    },
+  );
+};
+
 module.exports = {
   getUsers,
   getUserById,
@@ -208,4 +229,5 @@ module.exports = {
   acceptFriendRequest,
   getOutgoingRequests,
   getIncomingRequests,
+  declineOrRemoveFriend,
 };
